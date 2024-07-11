@@ -6,18 +6,31 @@ bash scripts to flex on your coworkers.
 
 ## Example
 
-Simple example:
+Simple examples:
 
 ```bash
+# defer block
+baz() {
+    echo "baz"
+    defer "
+        echo 'defer 1'
+        echo 'bye'
+    "
+}
+
+# defer statement
 foo() {
     echo "foo: 0"
     defer 'echo "foo: 1st defer"'
     errdefer 'echo "foo: 1st errdefer"'
     return "$1"
 }
+
 foo 0
 echo 
 foo 1
+echo
+baz
 ```
 
 Output:
@@ -29,6 +42,10 @@ foo: 1st defer
 foo: 0
 foo: 1st errdefer
 foo: 1st defer
+
+baz
+defer 1
+bye
 ```
 
 Nested example:
