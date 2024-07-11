@@ -22,12 +22,30 @@ if [ -n "$DEBUG" ]; then set -x; fi
 
 _defer() { eval "$*"; }
 _errdefer() { if [ "$ZIG_EAX" -ne 0 ]; then eval "$*"; fi }
-_extract_trap() {
+_xtrap() {
   local trap_str=$1
   local cb
   cb=${trap_str#"trap -- '"}
   cb=${cb%"' RETURN"}
   echo "$cb"
+}
+_ctrap() {
+  local cb prev_cb kind
+  prev_cb="$1"
+  kind="$2"
+  while read -r _cb; do
+    if [ -z "$_cb" ]; then continue; fi
+    if [ -z "$cb" ]; then
+      cb="$_cb"
+    else
+      cb="$cb; $_cb"
+    fi
+  done
+  if [ -z "$prev_cb" ]; then
+    echo "$kind $cb; trap - RETURN; ZIG_EAX=0"
+  else
+    echo "$kind $cb; $prev_cb"
+  fi
 }
 
 # shellcheck disable=SC2154
@@ -41,23 +59,11 @@ alias return='if read -r rc; then
 fi <<<'
 
 # shellcheck disable=SC2154
-alias defer='if read -r cb; then
-  local prev_cb
-  prev_cb=$(_extract_trap "$(trap -p RETURN)")
-  if [ -z "$prev_cb" ]; then
-    trap "_defer $cb; trap - RETURN; ZIG_EAX=0" RETURN
-  else
-    trap "_defer $cb; $prev_cb" RETURN
-  fi
+alias defer='if true; then
+  trap "$(_ctrap "$(_xtrap "$(trap -p RETURN)")" _defer)" RETURN
 fi <<<'
 
 # shellcheck disable=SC2154
-alias errdefer='if read -r cb; then
-  local prev_cb
-  prev_cb=$(_extract_trap "$(trap -p RETURN)")
-  if [ -z "$prev_cb" ]; then
-    trap "_errdefer ""$cb""; trap - RETURN; ZIG_EAX=0" RETURN
-  else
-    trap "_errdefer ""$cb""; $prev_cb" RETURN
-  fi
+alias errdefer='if true; then
+  trap "$(_ctrap "$(_xtrap "$(trap -p RETURN)")" _errdefer)" RETURN
 fi <<<'
