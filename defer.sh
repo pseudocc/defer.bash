@@ -20,8 +20,16 @@ shopt -s expand_aliases
 
 if [ -n "$DEBUG" ]; then set -x; fi
 
-_defer() { eval "$*"; }
-_errdefer() { if [ "$DEFER_RC" -ne 0 ]; then eval "$*"; fi }
+_defer() {
+    eval "$*"
+}
+
+_errdefer() {
+    if [ "$DEFER_RC" -ne 0 ]; then 
+        eval "$*"
+    fi
+}
+
 _xtrap() {
   local trap_str=$1
   local cb
@@ -29,6 +37,7 @@ _xtrap() {
   cb=${cb%"' RETURN"}
   echo "$cb"
 }
+
 _ctrap() {
   local cb prev_cb kind
   prev_cb="$1"
