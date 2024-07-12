@@ -25,7 +25,7 @@ _defer() {
 }
 
 _errdefer() {
-    if [ "$DEFER_RC" -ne 0 ]; then 
+    if [ "${DEFER_RC:-0}" -ne 0 ]; then 
         eval "$*"
     fi
 }
@@ -59,12 +59,8 @@ _ctrap() {
 
 # shellcheck disable=SC2154
 alias return='if read -r rc; then
-  if [ -z "$(trap -p RETURN)" ]; then
-    return $rc;
-  else
-    DEFER_RC=$rc;
-    return $rc;
-  fi
+  if [ -n "$(trap -p RETURN)" ]; then DEFER_RC=$rc; fi
+  return $rc
 fi <<<'
 
 # shellcheck disable=SC2154
