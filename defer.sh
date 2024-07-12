@@ -10,10 +10,10 @@
 # are running in non-interactive mode.
 #
 # The `return` overrides the default `return` keyword, which will set the env
-# variable `ZIG_EAX` to the return value of the function, so `errdefer` can
+# variable `DEFER_RC` to the return value of the function, so `errdefer` can
 # check the return value of the function. (`$?` does not work in this case.)
 
-ZIG_EAX=0
+DEFER_RC=0
 
 # Use aliases as C-style macros
 shopt -s expand_aliases
@@ -21,7 +21,7 @@ shopt -s expand_aliases
 if [ -n "$DEBUG" ]; then set -x; fi
 
 _defer() { eval "$*"; }
-_errdefer() { if [ "$ZIG_EAX" -ne 0 ]; then eval "$*"; fi }
+_errdefer() { if [ "$DEFER_RC" -ne 0 ]; then eval "$*"; fi }
 _xtrap() {
   local trap_str=$1
   local cb
@@ -42,7 +42,7 @@ _ctrap() {
     fi
   done
   if [ -z "$prev_cb" ]; then
-    echo "$kind $cb; trap - RETURN; ZIG_EAX=0"
+    echo "$kind $cb; trap - RETURN; DEFER_RC=0"
   else
     echo "$kind $cb; $prev_cb"
   fi
@@ -53,7 +53,7 @@ alias return='if read -r rc; then
   if [ -z "$(trap -p RETURN)" ]; then
     return $rc;
   else
-    ZIG_EAX=$rc;
+    DEFER_RC=$rc;
     return $rc;
   fi
 fi <<<'

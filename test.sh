@@ -1,7 +1,7 @@
 #!/bin/bash
 # vim: ts=4:et
 
-. zig.sh
+. defer.sh
 
 if [ -n "$DEBUG" ]; then set -x; fi
 

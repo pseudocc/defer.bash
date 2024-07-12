@@ -1,4 +1,4 @@
-# ZIG.BASH
+# DEFER.BASH
 
 This is a bash library that provides the Zig-like `defer` and `errdefer`
 functionalities. Please feel free to copy and paste this code into your
