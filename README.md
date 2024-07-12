@@ -4,6 +4,10 @@ This is a bash library that provides the Zig-like `defer` and `errdefer`
 functionalities. Please feel free to copy and paste this code into your
 bash scripts to flex on your coworkers.
 
+## Side Effect
+
+The wrapped `return` makes the return code required.
+
 ## Example
 
 Simple examples:
