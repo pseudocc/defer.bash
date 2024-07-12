@@ -31,10 +31,10 @@ _errdefer() {
 }
 
 _xtrap() {
-  local trap_str=$1
   local cb
-  cb=${trap_str#"trap -- '"}
+  cb=${1#"trap -- '"}
   cb=${cb%"' RETURN"}
+  cb=${cb//"'\''"/"'"}
   echo "$cb"
 }
 
@@ -51,9 +51,9 @@ _ctrap() {
     fi
   done
   if [ -z "$prev_cb" ]; then
-    echo "$kind $cb; trap - RETURN; DEFER_RC=0"
+    echo "$kind \"$cb\"; trap - RETURN; DEFER_RC=0"
   else
-    echo "$kind $cb; $prev_cb"
+    echo "$kind \"$cb\"; $prev_cb"
   fi
 }
 
