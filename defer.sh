@@ -17,6 +17,7 @@ DEFER_RC=0
 
 # Use aliases as C-style macros
 shopt -s expand_aliases
+trap 'shopt -u expand_aliases' EXIT
 
 if [ -n "$DEBUG" ]; then set -x; fi
 
